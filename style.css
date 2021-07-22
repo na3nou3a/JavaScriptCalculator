@@ -1,0 +1,93 @@
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+  padding: 0%;
+  margin: 0%;
+  font-family: monospace, verdana, sans-serif;
+}
+body {
+  text-align: center;
+  background-color: black;
+  font-size: 100%;
+}
+main {
+  min-height: 70vh;
+}
+
+header h1,
+footer p,
+footer p a {
+  color: gold;
+}
+#container {
+  width: 420px;
+  margin: 1% auto;
+  background-color: rgb(28, 27, 35);
+  border: 10px solid rgba(47, 47, 47, 1);
+  border-radius: 4px;
+  display: grid;
+  justify-content: space-evenly;
+  grid-template-columns: repeat(4, 100px);
+  grid-template-rows: repeat(6, 80px);
+  gap: 2px;
+}
+
+#display {
+  grid-column: 1 / -1;
+  background-color: #eee;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: flex-end;
+  padding: 5px;
+  font-size: 2.5em;
+  overflow: hidden;
+  font-weight: initial;
+  margin: 5px;
+}
+
+button {
+  margin: 1px;
+  border-radius: 5%;
+  border: none;
+  font-weight: initial;
+  font-size: 2em;
+  font-family: monospace;
+  color: black;
+  background-color: rgb(149, 194, 240);
+}
+button:hover {
+  background-color: #383838;
+  color: white;
+}
+
+#zero {
+  grid-column: span 2;
+}
+
+.degit {
+  background-color: rgb(216, 211, 202);
+}
+
+@media screen and (max-width: 600px) {
+  #container {
+    width: 300px;
+    border-width: 5px;
+    grid-template-columns: repeat(4, 74px);
+    grid-template-rows: repeat(6, 50px);
+    gap: 1px;
+  }
+  #display {
+    font-size: 2em;
+  }
+}
+footer {
+  font-size: 90%;
+  border-top: 1px solid #383838;
+  padding: 10px 0;
+}
+
+.heighlight {
+  background-color: rgba(243, 199, 6, 0.938);
+}
