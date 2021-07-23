@@ -1,10 +1,7 @@
 const buttons = document.querySelectorAll("button");
 const display = document.getElementById("display");
-
-let firstPart = [];
-let secondPart = [];
-let flag = false;
-let indice = false;
+let left = ["0"];
+let right = ["0"];
 let operator = "";
 
 buttons.forEach(function (btn) {
@@ -22,9 +19,9 @@ function myFunction(e) {
   } else if (target.classList.contains("clear")) {
     clear();
   } else if (target.classList.contains("decimal")) {
-    handleDecimal();
+    handleDecimal(target);
   } else if (target.classList.contains("sign")) {
-    handleSign(val);
+    handleSign(target);
   } else if (target.classList.contains("equals")) {
     handleEquals(target);
   } else if (target.classList.contains("percent")) {
@@ -33,105 +30,58 @@ function myFunction(e) {
 }
 
 function handelDegit(degit) {
-  if (!flag) {
-    if (firstPart.length === 0 && degit === "0") {
+  if (operator === "") {
+    if (left.length === 1 && left[0] === "0" && degit === "0") {
       return;
+    } else if (left.length === 1 && left[0] === "0" && degit !== "0") {
+      left = [degit];
     } else {
-      firstPart.push(degit);
+      left.push(degit);
     }
+    changeDisplay(left);
   } else {
-    secondPart = [...firstPart];
-    firstPart = [];
-    flag = false;
-    if (firstPart.length === 0 && degit === "0") {
+    if (right.length === 1 && right[0] === "0" && degit === "0") {
       return;
+    } else if (right.length === 1 && right[0] === "0" && degit !== "0") {
+      right = [degit];
     } else {
-      firstPart.push(degit);
+      right.push(degit);
     }
+    changeDisplay(right);
   }
-  changeDisplay(firstPart);
 }
 
-function changeDisplay(txt) {
-  if (Array.isArray(txt)) {
-    display.textContent = txt.join("");
-  } else {
-    display.textContent = txt;
-  }
+function changeDisplay(array) {
+  display.textContent = array.join("");
 }
 
 function changeOperator(op, btn) {
   const previousHeighlighted = document.querySelector(".heighlight");
-  if (firstPart.length === 0 && secondPart.length === 0) {
-    return;
+  if (previousHeighlighted) {
+    operator = op;
+    previousHeighlighted.classList.remove("heighlight");
+    btn.classList.add("heighlight");
   } else {
-    if (operator === "" && previousHeighlighted) {
-      operator = op;
-      previousHeighlighted.classList.remove("heighlight");
-      btn.classList.add("heighlight");
-      flag = true;
-    } else {
-      operator = op;
-      btn.classList.add("heighlight");
-      flag = true;
-    }
+    operator = op;
+    btn.classList.add("heighlight");
   }
 }
 
 function clear() {
   const previousHeighlighted = document.querySelector(".heighlight");
-  firstPart = [];
-  secondPart = [];
-  flag = false;
+  left = ["0"];
+  right = ["0"];
   operator = "";
-  changeDisplay("0");
-
+  changeDisplay(left);
   if (previousHeighlighted) {
     previousHeighlighted.classList.remove("heighlight");
   }
 }
 
-// function handleEquals(equalsBtn) {
-//   const previousHeighlighted = document.querySelector(".heighlight");
-//   if (firstPart === [] || secondPart === []) {
-//     return;
-//   } else {
-//     let val1 = parseFloat(firstPart.join(""));
-//     let val2 = parseFloat(secondPart.join(""));
-//     if (operator === "+") {
-//       sum(val1, val2);
-//     } else if (operator === "-") {
-//       sub(val1, val2);
-//     } else if (operator === "*") {
-//       mul(val1, val2);
-//     } else if (operator === "/") {
-//       devide(val1, val2);
-//     }
-
-//     if (previousHeighlighted) {
-//       previousHeighlighted.classList.remove("heighlight");
-//       equalsBtn.classList.add("heighlight");
-//     }
-
-//   }
-// }
-
 function handleEquals(equalsBtn) {
-  let val1;
-  let val2;
   const previousHeighlighted = document.querySelector(".heighlight");
-
-  if (firstPart === [] && secondPart === []) {
-    return;
-  } else if (firstPart.length > 0 && secondPart.length > 0) {
-    val1 = parseFloat(firstPart.join(""));
-    val2 = parseFloat(secondPart.join(""));
-  } else {
-    val1 = parseFloat(firstPart.join(""));
-    val2 = val1;
-    indice = true;
-    console.log(indice);
-  }
+  let val1 = parseFloat(left.join(""));
+  let val2 = parseFloat(right.join(""));
 
   if (operator === "+") {
     sum(val1, val2);
@@ -141,104 +91,136 @@ function handleEquals(equalsBtn) {
     mul(val1, val2);
   } else if (operator === "/") {
     devide(val1, val2);
+  } else {
+    sum(0, 0); // for "" operator
   }
 
   if (previousHeighlighted) {
     previousHeighlighted.classList.remove("heighlight");
+    equalsBtn.classList.add("heighlight");
+  } else {
     equalsBtn.classList.add("heighlight");
   }
 }
 
 function sum(a, b) {
   let result = a + b;
-  result = adaptSize(result);
-  changeDisplay(result);
-  reuse(result);
+  restartWith(result);
 }
 
 function sub(a, b) {
-  let result = b - a;
-  result = adaptSize(result);
-  changeDisplay(result);
-  reuse(result);
+  let result = a - b;
+  restartWith(result);
 }
 
 function mul(a, b) {
   let result = a * b;
-  result = adaptSize(result);
-  changeDisplay(result);
-  reuse(result);
+  restartWith(result);
 }
 
 function devide(a, b) {
-  let result = b / a;
-  result = adaptSize(result);
-  changeDisplay(result);
-  reuse(result);
+  let result = a / b;
+  restartWith(result);
 }
 
-function reuse(result) {
-  firstPart = [result];
-  secondPart = [];
-  flag = true;
-  if (!indice) {
-    operator = "";
+function restartWith(result) {
+  const previousHeighlighted = document.querySelector(".heighlight");
+  left = [adaptSize(result)];
+  right = ["0"];
+  operator = "";
+  changeDisplay(left);
+  if (previousHeighlighted) {
+    previousHeighlighted.classList.remove("heighlight");
   }
 }
-
 function adaptSize(result) {
   let str = result.toString();
   if (str.length >= 12) {
     let resized = str.slice(0, 12);
-    return parseFloat(resized);
+    return resized;
   } else {
-    return result;
+    return result.toString();
   }
 }
 
-function handleSign(sign) {
-  let l = firstPart.length;
-  if (
-    l === 0 ||
-    (l === 1 && firstPart[0] === "0") ||
-    (l === 1 && firstPart[0] === 0)
-  ) {
-    return;
-  } else {
-    let signed = -parseFloat(firstPart.join(""));
-    firstPart = [signed];
-    changeDisplay(firstPart);
-  }
-}
-
-function handleDecimal() {
-  console.log("flag", flag);
-  if (firstPart.includes(".")) {
-    return;
-  } else {
-    if (firstPart.length === 0) {
-      firstPart = [0, "."];
-      changeDisplay(firstPart);
+function handleSign(btn) {
+  const previousHeighlighted = document.querySelector(".heighlight");
+  if (operator === "") {
+    if (left.length === 1 && left[0] === "0") {
+      return;
     } else {
-      if (!flag) {
-        firstPart.push(".");
-        changeDisplay(firstPart);
+      let signed = -parseFloat(left.join(""));
+      left = [signed.toString()];
+      changeDisplay(left);
+    }
+  } else {
+    if (right.length === 1 && right[0] === "0") {
+      return;
+    } else {
+      let signed = -parseFloat(right.join(""));
+      right = [signed.toString()];
+      changeDisplay(right);
+    }
+  }
+
+  if (previousHeighlighted) {
+    previousHeighlighted.classList.remove("heighlight");
+    btn.classList.add("heighlight");
+  } else {
+    btn.classList.add("heighlight");
+  }
+}
+
+function handleDecimal(btn) {
+  const previousHeighlighted = document.querySelector(".heighlight");
+  if (operator === "") {
+    for (let elm of left) {
+      if (elm.includes(".")) {
+        return;
+      } else if (left.length === 1 && left[0] === "0") {
+        left = ["0", "."];
+      } else {
+        left.push(".");
       }
+    }
+    changeDisplay(left);
+    if (previousHeighlighted) {
+      previousHeighlighted.classList.remove("heighlight");
+      btn.classList.add("heighlight");
+    } else {
+      btn.classList.add("heighlight");
+    }
+  } else {
+    for (let elm of right) {
+      if (elm.includes(".")) {
+        return;
+      } else if (right.length === 1 && right[0] === "0") {
+        right = ["0", "."];
+      } else {
+        right.push(".");
+      }
+    }
+    changeDisplay(right);
+    if (previousHeighlighted) {
+      previousHeighlighted.classList.remove("heighlight");
+      btn.classList.add("heighlight");
+    } else {
+      btn.classList.add("heighlight");
     }
   }
 }
-
+// P% * X = Y
 function calcPercentage(btn) {
   const previousHeighlighted = document.querySelector(".heighlight");
+  let result = parseFloat(left.join("")) / 100 || 0;
+  result = result * parseFloat(right.join("")) || 0;
+  left = [adaptSize(result)];
+  changeDisplay(left);
 
-  // P% * X = Y
-  let p = parseFloat(firstPart.join("")) / 100;
-  p = p * parseFloat(secondPart.join("")) || 0;
-  p = adaptSize(p);
-  changeDisplay(p);
-  reuse(p);
   if (previousHeighlighted) {
     previousHeighlighted.classList.remove("heighlight");
+    btn.classList.add("heighlight");
+  } else {
     btn.classList.add("heighlight");
   }
 }
