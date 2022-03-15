@@ -5,47 +5,49 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Calculator</title>
-    <link href="style.css" rel="stylesheet" type="text/css" />
+    <link href="./style.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
-    <header>
-      <h1>JavaScript Calculator</h1>
-    </header>
-    <main>
-      <div id="container">
-        <div id="display">0</div>
-        <button type="button" class="clear" value="clear">AC</button>
-        <button type="button" class="sign" value="sign">+/-</button>
-        <button type="button" class="percent" value="percent">%</button>
-        <button type="button" class="operator" value="/">/</button>
-        <button type="button" class="degit" value="7">7</button>
-        <button type="button" class="degit" value="8">8</button>
-        <button type="button" class="degit" value="9">9</button>
-        <button type="button" class="operator" value="*">*</button>
-        <button type="button" class="degit" value="4">4</button>
-        <button type="button" class="degit" value="5">5</button>
-        <button type="button" class="degit" value="6">6</button>
-        <button type="button" class="operator" value="-">-</button>
-        <button type="button" class="degit" value="1">1</button>
-        <button type="button" class="degit" value="2">2</button>
-        <button type="button" class="degit" value="3">3</button>
-        <button type="button" class="operator" value="+">+</button>
-        <button type="button" id="zero" class="degit" value="0">0</button>
-        <button type="button" class="decimal" value=".">.</button>
-        <button type="button" class="equals" value="=">=</button>
-      </div>
-    </main>
-    <footer>
-      <p>&copy; Copyright2021</p>
-      <p>
-        This calculator is part of
-        <a
-          href="https://www.theodinproject.com/paths/foundations/courses/foundations/lessons/calculator"
-          target="_blank"
-          >TheOdinsProject</a
-        >
-      </p>
-    </footer>
+    <div class="wrapper">
+      <header>
+        <h1>JavaScript Calculator</h1>
+      </header>
+      <main>
+        <div class="container">
+          <div id="display">0</div>
+          <button type="button" class="clear" value="clear">AC</button>
+          <button type="button" class="sign" value="sign">+/-</button>
+          <button type="button" class="operator" value="%">%</button>
+          <button type="button" class="operator" value="/">/</button>
+          <button type="button" class="degit" value="7">7</button>
+          <button type="button" class="degit" value="8">8</button>
+          <button type="button" class="degit" value="9">9</button>
+          <button type="button" class="operator" value="*">*</button>
+          <button type="button" class="degit" value="4">4</button>
+          <button type="button" class="degit" value="5">5</button>
+          <button type="button" class="degit" value="6">6</button>
+          <button type="button" class="operator" value="-">-</button>
+          <button type="button" class="degit" value="1">1</button>
+          <button type="button" class="degit" value="2">2</button>
+          <button type="button" class="degit" value="3">3</button>
+          <button type="button" class="operator" value="+">+</button>
+          <button type="button" id="zero" class="degit" value="0">0</button>
+          <button type="button" class="decimal" value=".">.</button>
+          <button type="button" class="equals" value="=">=</button>
+        </div>
+      </main>
+      <footer>
+        <p>&copy; Copyright2021</p>
+        <p>
+          This calculator is part of
+          <a
+            href="https://www.theodinproject.com/paths/foundations/courses/foundations/lessons/calculator"
+            target="_blank"
+            >TheOdinsProject</a
+          >
+        </p>
+      </footer>
+    </div>
     <script src="script.js"></script>
   </body>
 </html>

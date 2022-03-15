@@ -1,226 +1,207 @@
-const buttons = document.querySelectorAll("button");
-const display = document.getElementById("display");
-let left = ["0"];
-let right = ["0"];
-let operator = "";
-
+/*================ VARIABLES ================*/
+const buttons = document.querySelectorAll('button');
+const display = document.getElementById('display');
+let left = ['0'];
+let right = ['0'];
+let operator = '';
+let displayFlag = false;
+/*================ EVENTS ================*/
 buttons.forEach(function (btn) {
-  return btn.addEventListener("click", myFunction);
+  return btn.addEventListener('click', myFunction);
 });
-
+/*================ FUNCTIONS ================*/
+// main function
 function myFunction(e) {
-  let target = e.target;
-  let val = target.value;
-
-  if (target.classList.contains("degit")) {
+  const target = e.target;
+  const val = target.value;
+  if (target.classList.contains('degit')) {
     handelDegit(val);
-  } else if (target.classList.contains("operator")) {
-    changeOperator(val, target);
-  } else if (target.classList.contains("clear")) {
+  } else if (target.classList.contains('operator')) {
+    handleOperator(val, target);
+  } else if (target.classList.contains('clear')) {
     clear();
-  } else if (target.classList.contains("decimal")) {
+  } else if (target.classList.contains('decimal')) {
     handleDecimal(target);
-  } else if (target.classList.contains("sign")) {
+  } else if (target.classList.contains('sign')) {
     handleSign(target);
-  } else if (target.classList.contains("equals")) {
-    handleEquals(target);
-  } else if (target.classList.contains("percent")) {
-    calcPercentage(target);
+  } else if (target.classList.contains('equals')) {
+    handleEquals();
   }
 }
-
+// degits
 function handelDegit(degit) {
-  if (operator === "") {
-    if (left.length === 1 && left[0] === "0" && degit === "0") {
+  if (operator === '') {
+    if (left.length === 1 && left[0] === '0' && degit === '0') {
       return;
-    } else if (left.length === 1 && left[0] === "0" && degit !== "0") {
-      left = [degit];
+    } else if (left.length === 1 && left[0] === '0' && degit !== '0') {
+      left = [degit.toString()];
     } else {
-      left.push(degit);
+      left.push(degit.toString());
     }
-    changeDisplay(left);
   } else {
-    if (right.length === 1 && right[0] === "0" && degit === "0") {
+    if (right.length === 1 && right[0] === '0' && degit === '0') {
       return;
-    } else if (right.length === 1 && right[0] === "0" && degit !== "0") {
-      right = [degit];
+    } else if (right.length === 1 && right[0] === '0' && degit !== '0') {
+      right = [degit.toString()];
     } else {
-      right.push(degit);
+      right.push(degit.toString());
     }
-    changeDisplay(right);
+  }
+  changeDisplay();
+}
+// display
+function changeDisplay(param) {
+  if (displayFlag) {
+    display.textContent = param;
+    return;
+  }
+  if (param === 0) {
+    display.textContent = '0';
+  } else {
+    if (right.join('') === '0') {
+      display.textContent = left.join('') + operator;
+    } else {
+      display.textContent = left.join('') + operator + right.join('');
+    }
   }
 }
+// operator
+function handleOperator(op, btn) {
+  const previousHeighlighted = document.querySelector('.heighlight');
+  if (operator === '') {
+    operator = op;
+  } else {
+    handleEquals(null);
+    operator = op;
+  }
 
-function changeDisplay(array) {
-  display.textContent = array.join("");
-}
-
-function changeOperator(op, btn) {
-  const previousHeighlighted = document.querySelector(".heighlight");
   if (previousHeighlighted) {
-    operator = op;
-    previousHeighlighted.classList.remove("heighlight");
-    btn.classList.add("heighlight");
-  } else {
-    operator = op;
-    btn.classList.add("heighlight");
+    previousHeighlighted.classList.remove('heighlight');
   }
+  btn.classList.add('heighlight');
+  changeDisplay();
 }
-
+// clear
 function clear() {
-  const previousHeighlighted = document.querySelector(".heighlight");
-  left = ["0"];
-  right = ["0"];
-  operator = "";
-  changeDisplay(left);
+  const previousHeighlighted = document.querySelector('.heighlight');
+  left = ['0'];
+  right = ['0'];
+  operator = '';
+  displayFlag = false;
+  changeDisplay(0);
   if (previousHeighlighted) {
-    previousHeighlighted.classList.remove("heighlight");
+    previousHeighlighted.classList.remove('heighlight');
   }
 }
-
-function handleEquals(equalsBtn) {
-  const previousHeighlighted = document.querySelector(".heighlight");
-  let val1 = parseFloat(left.join(""));
-  let val2 = parseFloat(right.join(""));
-
-  if (operator === "+") {
-    sum(val1, val2);
-  } else if (operator === "-") {
-    sub(val1, val2);
-  } else if (operator === "*") {
-    mul(val1, val2);
-  } else if (operator === "/") {
-    devide(val1, val2);
+// equals
+function handleEquals() {
+  const previousHeighlighted = document.querySelector('.heighlight');
+  let val1 = parseFloat(left.join(''));
+  let val2 = parseFloat(right.join(''));
+  let result;
+  if (operator === '+') {
+    result = sum(val1, val2);
+  } else if (operator === '-') {
+    result = sub(val1, val2);
+  } else if (operator === '*') {
+    result = mul(val1, val2);
+  } else if (operator === '/') {
+    result = devide(val1, val2);
+  } else if (operator === '%') {
+    result = calcModulus(val1, val2);
   } else {
-    sum(0, 0); // for "" operator
+    result = sum(0, 0); // for "" operator
   }
 
   if (previousHeighlighted) {
-    previousHeighlighted.classList.remove("heighlight");
-    equalsBtn.classList.add("heighlight");
-  } else {
-    equalsBtn.classList.add("heighlight");
+    previousHeighlighted.classList.remove('heighlight');
   }
-}
 
-function sum(a, b) {
-  let result = a + b;
+  result = Math.round(1000000000000 * result) / 1000000000000;
+  displayFlag = true;
+  changeDisplay(result);
   restartWith(result);
+}
+// calc functions
+function sum(a, b) {
+  return a + b;
 }
 
 function sub(a, b) {
-  let result = a - b;
-  restartWith(result);
+  return a - b;
 }
 
 function mul(a, b) {
-  let result = a * b;
-  restartWith(result);
+  return a * b;
 }
 
 function devide(a, b) {
-  let result = a / b;
-  restartWith(result);
+  return a / b;
 }
 
+function calcModulus(a, b) {
+  return a % b;
+}
+// after getting result
 function restartWith(result) {
-  const previousHeighlighted = document.querySelector(".heighlight");
-  left = [adaptSize(result)];
-  right = ["0"];
-  operator = "";
-  changeDisplay(left);
+  const previousHeighlighted = document.querySelector('.heighlight');
+  displayFlag = false;
+  left = [result.toString()];
+  right = ['0'];
+  operator = '';
   if (previousHeighlighted) {
-    previousHeighlighted.classList.remove("heighlight");
+    previousHeighlighted.classList.remove('heighlight');
   }
 }
-function adaptSize(result) {
-  let str = result.toString();
-  if (str.length >= 12) {
-    let resized = str.slice(0, 12);
-    return resized;
-  } else {
-    return result.toString();
-  }
-}
-
+// + - signs
 function handleSign(btn) {
-  const previousHeighlighted = document.querySelector(".heighlight");
-  if (operator === "") {
-    if (left.length === 1 && left[0] === "0") {
+  const previousHeighlighted = document.querySelector('.heighlight');
+  if (operator === '') {
+    if (left.length === 1 && left[0] === '0') {
       return;
     } else {
-      let signed = -parseFloat(left.join(""));
+      let signed = -parseFloat(left.join(''));
       left = [signed.toString()];
-      changeDisplay(left);
     }
   } else {
-    if (right.length === 1 && right[0] === "0") {
+    if (right.length === 1 && right[0] === '0') {
       return;
     } else {
-      let signed = -parseFloat(right.join(""));
+      let signed = -parseFloat(right.join(''));
       right = [signed.toString()];
-      changeDisplay(right);
     }
   }
+  changeDisplay();
 
   if (previousHeighlighted) {
-    previousHeighlighted.classList.remove("heighlight");
-    btn.classList.add("heighlight");
-  } else {
-    btn.classList.add("heighlight");
+    previousHeighlighted.classList.remove('heighlight');
   }
+  btn.classList.add('heighlight');
 }
-
+// decimal
 function handleDecimal(btn) {
-  const previousHeighlighted = document.querySelector(".heighlight");
-  if (operator === "") {
-    for (let elm of left) {
-      if (elm.includes(".")) {
-        return;
-      } else if (left.length === 1 && left[0] === "0") {
-        left = ["0", "."];
-      } else {
-        left.push(".");
-      }
-    }
-    changeDisplay(left);
-    if (previousHeighlighted) {
-      previousHeighlighted.classList.remove("heighlight");
-      btn.classList.add("heighlight");
+  const previousHeighlighted = document.querySelector('.heighlight');
+  if (operator === '') {
+    const str = left.join('');
+    if (str.indexOf('.') >= 0) return;
+    if (left.length === 1 && left[0] === '0') {
+      left = ['0', '.'];
     } else {
-      btn.classList.add("heighlight");
+      left.push('.');
     }
   } else {
-    for (let elm of right) {
-      if (elm.includes(".")) {
-        return;
-      } else if (right.length === 1 && right[0] === "0") {
-        right = ["0", "."];
-      } else {
-        right.push(".");
-      }
-    }
-    changeDisplay(right);
-    if (previousHeighlighted) {
-      previousHeighlighted.classList.remove("heighlight");
-      btn.classList.add("heighlight");
+    const str = right.join('');
+    if (str.indexOf('.') >= 0) return;
+    if (right.length === 1 && right[0] === '0') {
+      right = ['0', '.'];
     } else {
-      btn.classList.add("heighlight");
+      right.push('.');
     }
   }
-}
-// P% * X = Y
-function calcPercentage(btn) {
-  const previousHeighlighted = document.querySelector(".heighlight");
-  let result = parseFloat(left.join("")) / 100 || 0;
-  result = result * parseFloat(right.join("")) || 0;
-  left = [adaptSize(result)];
-  changeDisplay(left);
 
+  changeDisplay();
   if (previousHeighlighted) {
-    previousHeighlighted.classList.remove("heighlight");
-    btn.classList.add("heighlight");
-  } else {
-    btn.classList.add("heighlight");
+    previousHeighlighted.classList.remove('heighlight');
   }
+  btn.classList.add('heighlight');
 }
